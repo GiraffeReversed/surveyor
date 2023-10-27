@@ -33,5 +33,17 @@ app.put('/ratings', jsonParser, (req, res) => {
     let time = Date.now();
     body.time = time;
     res.send({ "message": "ok" });
-    storage.setItem(time.toString(), body).then(() => console.log("data saved"));
+    let userID = body.userID;
+    storage.setItem(time.toString(), body).then(() => console.log("data saved"));  // todo add random
+    storage.setItem(userID, body).then(() => console.log("data saved"));
+})
+
+
+app.get('/ratings/:userID', (req, res) => {
+    storage.getItem(req.params.userID).then((data) => {
+        if (data === undefined) {
+            res.send({ name: "", expYears: undefined, expGroups: {}, ratings: Array.apply(undefined, { length: 0 }), userID: req.params.userID });
+        }
+        res.send(data);
+    })
 })
