@@ -3,6 +3,8 @@ services:
     build: server
     # ports:
     #   - "5000:5000"
+    volumes:
+      - ./server/db:/app/db
     restart: unless-stopped
   frontend:
     build: client
