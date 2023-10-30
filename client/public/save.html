@@ -18,7 +18,7 @@
   <script>
     function load_data() {
       let userID = getUserIDFromURL();
-      fetch(`/ratings/${userID}`)
+      fetch(`/api/ratings/${userID}`)
         .then(handleErrors)
         .then(resp => resp.json())
         .then(data => {

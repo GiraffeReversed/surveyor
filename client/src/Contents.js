@@ -131,7 +131,7 @@ export default function Contents({ userID, setUserID }) {
     let [ratings, setRatings] = React.useState(data.ratings);
 
     React.useEffect(() => {
-        fetch("/defects").then(
+        fetch("/api/defects").then(
             response => response.json()
         ).then(
             json => {
@@ -152,7 +152,7 @@ export default function Contents({ userID, setUserID }) {
 
     React.useEffect(() => {
         if (validInfo(name, expYears, expGroups, considersCS1)) {
-            fetch("/ratings", {
+            fetch("/api/ratings", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID))

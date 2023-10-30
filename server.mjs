@@ -13,7 +13,7 @@ await storage.init({ dir: "db" })
 // This displays message that the server running and listening to specified port
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-app.get('/defects', (req, res) => {
+app.get('/api/defects', (req, res) => {
     !async function () {
         let data = await fetch(
             "https://docs.google.com/spreadsheets/d/11dPVW6guimG1q7xfwhUXjlkGVo_0kaM3zjyoC0HZS8s/export?format=csv&gid=1135102307"
@@ -28,11 +28,11 @@ app.get('/defects', (req, res) => {
     }();
 })
 
-app.put('/ratings', jsonParser, (req, res) => {
+app.put('/api/ratings', jsonParser, (req, res) => {
     let body = req.body;
     let time = Date.now();
     body.time = time;
-   
+
     let userID = body.userID;
     const historyID = `history-${time.toString()}-${userID}`;
     const userLatestID = `user-latest-${userID}`;
@@ -44,7 +44,7 @@ app.put('/ratings', jsonParser, (req, res) => {
 })
 
 
-app.get('/ratings/:userID', (req, res) => {
+app.get('/api/ratings/:userID', (req, res) => {
     const userID = req.params.userID;
     const userLatestID = `user-latest-${userID}`;
 
