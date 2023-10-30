@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark">
+  <title>Surveyor - load state</title>
+</head>
+
+<!-- http://localhost:3000/save.html?id=42 -->
+
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="msg">We're loading your saved progress.</div>
+
+<script>
+function load_data(){
+    let userID = getUserIDFromURL();
+    fetch(`http://localhost:5000/ratings/${userID}`)
+    .then(handleErrors)
+    .then(resp => resp.json())
+    .then(data => {
+        console.log(data);
+        window.localStorage.setItem("surveyData", JSON.stringify(data));
+        // window.location.replace("/");
+    })
+    .catch(error => console.log(error));
+}
+
+function getUserIDFromURL(){
+    const params = window.location.search;
+    let params_parsed = new URLSearchParams(params);
+    userID = params_parsed.get('id');
+    if (userID === null){
+        alert("Missing user ID in URL.")
+    }
+    console.log(userID);
+    return userID;
+}
+
+function handleErrors(response) {
+    if (!response.ok) {
+        alert(response.text());
+        throw Error(response.statusText);
+    }
+    return response;
+}
+
+window.addEventListener("load", (event) => { load_data(); });
+
+</script>
+
+</body>
+
+</html>
