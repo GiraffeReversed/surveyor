@@ -15,11 +15,15 @@ function validExpGroups(expGroups) {
     return Object.values(expGroups).some((v) => v);
 }
 
-function validInfo(name, expYears, expGroups) {
-    return validName(name) && validExpYears(expYears) && validExpGroups(expGroups);
+function validConsidersCS1(considersCS1) {
+    return considersCS1;
 }
 
-function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpGroups }) {
+function validInfo(name, expYears, expGroups, considersCS1) {
+    return validName(name) && validExpYears(expYears) && validExpGroups(expGroups) && validConsidersCS1(considersCS1);
+}
+
+function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpGroups, considersCS1, setConsidersCS1 }) {
     let expYearsRadios = ["0", "1", "2-3", ">=4"].map((label, i) => {
         return (
             <Form.Check inline key={i} id={`expYears-${label}`}>
@@ -73,9 +77,21 @@ function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpG
                         {expGroupsRadios}
                     </div>
                 </Form.Group>
+                <Form.Group md="6" as={Col}>
+                    <Form.Label>When filling in the survey, consider the perspective of teaching CS1 students (CS1 = introductory programming course at an university).</Form.Label>
+                    <Form.Check id="considersCS1">
+                        <Form.Check.Input
+                            type="checkbox"
+                            isInvalid={!validConsidersCS1(considersCS1)}
+                            checked={considersCS1 === true}
+                            onChange={() => { setConsidersCS1(!considersCS1) }}
+                        />
+                        <Form.Check.Label>I will consider this perspective.</Form.Check.Label>
+                    </Form.Check>
+                </Form.Group>
             </Form>
             <Row className="mb-3">
-                {validInfo(name, expYears, expGroups) || <div className="is-invalid" />}
+                {validInfo(name, expYears, expGroups, considersCS1) || <div className="is-invalid" />}
                 <div className="invalid-feedback">
                     Fill in the info before you start responding.
                 </div >
@@ -85,8 +101,8 @@ function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpG
 }
 
 
-function getDataObj(name, expYears, expGroups, ratings) {
-    return { name: name, expYears: expYears, expGroups: expGroups, ratings: ratings };
+function getDataObj(name, expYears, expGroups, considersCS1, ratings) {
+    return { name: name, expYears: expYears, expGroups: expGroups, considersCS1: considersCS1, ratings: ratings };
 }
 
 export default function Contents() {
@@ -94,7 +110,7 @@ export default function Contents() {
 
     let data = JSON.parse(window.localStorage.getItem("surveyData"));
     if (data === null)
-        data = { name: "", expYears: undefined, expGroups: {}, ratings: Array.apply(undefined, { length: defects.length }) };
+        data = { name: "", expYears: undefined, expGroups: {}, considersCS1: false, ratings: Array.apply(undefined, { length: defects.length }) };
 
     let [ratings, setRatings] = React.useState(data.ratings);
 
@@ -114,33 +130,39 @@ export default function Contents() {
     let [name, setName] = React.useState(data.name);
     let [expYears, setExpYears] = React.useState(data.expYears);
     let [expGroups, setExpGroups] = React.useState(data.expGroups);
+    let [considersCS1, setConsidersCS1] = React.useState(data.considersCS1);
 
     React.useEffect(() => {
         if (validInfo(name, expYears, expGroups)) {
             fetch("/ratings", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(getDataObj(name, expYears, expGroups, ratings))
+                body: JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings))
             });
         }
     }, [ratings]);
 
     React.useEffect(() => {
-        window.localStorage.setItem("surveyData", JSON.stringify(getDataObj(name, expYears, expGroups, ratings)));
-    }, [name, expYears, expGroups, ratings]);
+        window.localStorage.setItem("surveyData", JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings)));
+    }, [name, expYears, expGroups, ratings, setConsidersCS1]);
 
     let defectElems = defects.map((defect, i) => <Defect
         key={i}
         order={i}
         defect={defect}
-        disabled={!validInfo(name, expYears, expGroups)}
+        disabled={!validInfo(name, expYears, expGroups, considersCS1)}
         rating={ratings[i]}
         onChange={(newV) => setRatings(ratings.map((v, j) => i === j ? newV : v))}
     />);
 
     return (
         <Container className="my-3">
-            <SurveyeeInfo name={name} setName={setName} expYears={expYears} setExpYears={setExpYears} expGroups={expGroups} setExpGroups={setExpGroups} />
+            <SurveyeeInfo
+                name={name} setName={setName}
+                expYears={expYears} setExpYears={setExpYears}
+                expGroups={expGroups} setExpGroups={setExpGroups}
+                considersCS1={considersCS1} setConsidersCS1={setConsidersCS1}
+            />
             <Stack gap="2">{defectElems}</Stack>
         </Container>
     );
