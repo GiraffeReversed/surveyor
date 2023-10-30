@@ -1,5 +1,7 @@
 import { Container, Stack, Form, Row, Col } from 'react-bootstrap';
 import React from 'react';
+import ReactDOM from 'react-dom';
+import {QRCodeSVG} from 'qrcode.react';
 
 import Defect from './Defect.js';
 
@@ -121,6 +123,9 @@ export default function Contents() {
     let data = JSON.parse(window.localStorage.getItem("surveyData"));
     if (data === null)
         data = { name: "", expYears: undefined, expGroups: {}, considersCS1: false, ratings: {}, defectsOrder: undefined, userID: Math.random().toString(36).substring(2, 7) };
+
+    let restore_url = `${window.location.origin}/save.html?id=${data.userID}`;
+    ReactDOM.render( <QRCodeSVG value={restore_url} />, document.getElementById('qrcode') );
 
     let [defectsOrder, setDefectsOrder] = React.useState(data.defectsOrder);
     let [ratings, setRatings] = React.useState(data.ratings);
