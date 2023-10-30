@@ -115,12 +115,14 @@ function shuffleArray(array) {
     return array;
 }
 
-export default function Contents() {
+export default function Contents({ userID, setUserID }) {
     let [defects, setDefects] = React.useState([]);
 
     let data = JSON.parse(window.localStorage.getItem("surveyData"));
-    if (data === null)
+    if (data === null) {
         data = { name: "", expYears: undefined, expGroups: {}, considersCS1: false, ratings: {}, defectsOrder: undefined, userID: Math.random().toString(36).substring(2, 7) };
+        setUserID(data.userID);
+    }
 
     let [defectsOrder, setDefectsOrder] = React.useState(data.defectsOrder);
     let [ratings, setRatings] = React.useState(data.ratings);
@@ -144,7 +146,6 @@ export default function Contents() {
     let [expYears, setExpYears] = React.useState(data.expYears);
     let [expGroups, setExpGroups] = React.useState(data.expGroups);
     let [considersCS1, setConsidersCS1] = React.useState(data.considersCS1);
-    let [userID, _setUserID] = React.useState(data.userID);
 
     React.useEffect(() => {
         if (validInfo(name, expYears, expGroups, considersCS1)) {
