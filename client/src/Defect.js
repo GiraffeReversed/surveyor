@@ -8,45 +8,50 @@ import 'highlight.js/styles/github.css'
 hljs.registerLanguage('python', python);
 
 function Voter({ rating, order, disabled, onChange }) {
+    const options = [
+        { short_label: "no notify", long_label: "The student should not be notified of the defect." },
+        { short_label: "low notify", long_label: "Notifying the student has low priority." },
+        { short_label: "medium notify, low fix", long_label: "Notifying the student has medium priority but fixing the defect has low priority." },
+        { short_label: "high notify, medium fix", long_label: "Notifying the student has high priority and fixing the defect has medium priority." },
+        { short_label: "high notify, high fix", long_label: "Both notifying the student and fixing the defect has high priority." },
+    ];
+
     let [infoOpen, setInfoOpen] = React.useState(order === 0);
     return (
-        // <Row>
         <>
+            <div className='d-flex mb-1'>
+                <h5 className='small mb-0'>Should notify/fix?</h5>
+                <Button
+                    variant="secondary-outline"
+                    className="flex-fill p-0 border border-0"
+                    onClick={() => setInfoOpen(!infoOpen)}
+                    aria-controls={`info-block-${order}`}
+                    aria-expanded={infoOpen}
+                ><InfoCircle /></Button>
+            </div>
+
             <div className="d-flex align-items-center">
                 <Form>
-                    {[...Array(5).keys()].map((i) =>
-                        <Form.Check inline
+                    {options.map((option, i) =>
+                        <Form.Check
                             id={`voter-${order}-${i}`}
                             key={i}
                             name={`defect${order}`}
                             type="radio"
-                            label={i + 1}
+                            label={<><span className='me-2'>{i + 1}</span>{option.short_label}</>}
                             checked={i + 1 === rating}
                             disabled={disabled}
                             onClick={() => rating !== i + 1 ? onChange(i + 1) : onChange(undefined)}
                             onChange={() => undefined}
                         />)}
                 </Form>
-
-                <Button
-                    variant="secondary-outline"
-                    className="flex-fill p-1"
-                    onClick={() => setInfoOpen(!infoOpen)}
-                    aria-controls={`info-block-${order}`}
-                    aria-expanded={infoOpen}
-                ><InfoCircle /></Button>
             </div>
             <Collapse in={infoOpen}>
                 <ListGroup className="small">
-                    <ListGroup.Item className="mb-0 p-2"><span className="me-2">1</span> in some cases this is not a defect and even when the revised version is an improvement, it is not important one</ListGroup.Item>
-                    <ListGroup.Item className="mb-0 p-2"><span className="me-2">2</span> in between</ListGroup.Item>
-                    <ListGroup.Item className="mb-0 p-2"><span className="me-2">3</span> it is a defect, revision leads to improved code, but particularly for a novice programmer it is not a top priority to learn about it</ListGroup.Item>
-                    <ListGroup.Item className="mb-0 p-2"><span className="me-2">4</span> in between</ListGroup.Item>
-                    <ListGroup.Item className="mb-0 p-2"><span className="me-2">5</span> code should be revised, it is very useful to learn to use the improved version, students should be definitely notified</ListGroup.Item>
+                    {options.map((option, i) => <ListGroup.Item className="mb-0 p-2"><span className="me-2">{i + 1}</span>{option.long_label}</ListGroup.Item>)}
                 </ListGroup>
             </Collapse>
         </>
-        // </Row>
     )
 }
 
@@ -56,10 +61,10 @@ export default function Defect({ order, disabled, defect, rating, onChange }) {
             <Card.Title>{defect["defect name"]}</Card.Title>
             <Card.Body className="pb-0">
                 <Row className="text-start">
-                    <Col sm><h5 className='small'>Description</h5>{defect["description"]}</Col>
+                    <Col sm><h5 className='small'>Description</h5><p>{defect["description"]}</p></Col>
                     <Col sm><h5 className='small'>Example</h5><pre dangerouslySetInnerHTML={{ __html: hljs.highlight(defect["code example"], { language: 'python' }).value }} /></Col>
                     <Col sm><h5 className='small'>Fix example</h5><pre dangerouslySetInnerHTML={{ __html: hljs.highlight(defect["code fix example"], { language: 'python' }).value }} /></Col>
-                    <Col sm><h5 className='small'>Should notify/fix? </h5><Voter order={order} disabled={disabled} rating={rating} onChange={onChange} /></Col>
+                    <Col sm><Voter order={order} disabled={disabled} rating={rating} onChange={onChange} /></Col>
                 </Row>
             </Card.Body>
         </Card>
