@@ -1,7 +1,7 @@
-import { parse } from 'csv-parse/sync';
 import express from 'express';
 import bodyParser from 'body-parser';
 import storage from 'node-persist';
+import { URL } from 'url';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -14,18 +14,7 @@ await storage.init({ dir: "db" })
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 app.get('/api/defects', (req, res) => {
-    !async function () {
-        let data = await fetch(
-            "https://docs.google.com/spreadsheets/d/11dPVW6guimG1q7xfwhUXjlkGVo_0kaM3zjyoC0HZS8s/export?format=csv&gid=1135102307"
-        ).then(response => {
-            if (response.status !== 200)
-                throw Error()
-
-            return response.text();
-        }).then(text => parse(text, { columns: true }));
-
-        res.send({ "defects": data.filter((defect) => defect.selected === "1") });
-    }();
+    res.sendFile("defects.json", { root: new URL('.', import.meta.url).pathname });
 })
 
 app.put('/api/ratings', jsonParser, (req, res) => {
