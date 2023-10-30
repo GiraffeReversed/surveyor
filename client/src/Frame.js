@@ -21,7 +21,7 @@ export default function Frame() {
     data = {};
 
   let [userID, setUserID] = React.useState(data.userID);
-  let restore_url = `${window.location.origin}/save.html?id=${data.userID}`;
+  let restore_url = `${window.location.origin}/save.html?id=${userID}`;
 
   return (
     <>
