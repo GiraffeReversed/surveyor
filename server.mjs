@@ -16,7 +16,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 app.get('/defects', (req, res) => {
     !async function () {
         let data = await fetch(
-            "https://docs.google.com/spreadsheets/d/11dPVW6guimG1q7xfwhUXjlkGVo_0kaM3zjyoC0HZS8s/export?format=csv&gid=139691573"
+            "https://docs.google.com/spreadsheets/d/11dPVW6guimG1q7xfwhUXjlkGVo_0kaM3zjyoC0HZS8s/export?format=csv&gid=1135102307"
         ).then(response => {
             if (response.status !== 200)
                 throw Error()
