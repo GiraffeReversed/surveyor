@@ -133,7 +133,7 @@ export default function Contents() {
     let [considersCS1, setConsidersCS1] = React.useState(data.considersCS1);
 
     React.useEffect(() => {
-        if (validInfo(name, expYears, expGroups)) {
+        if (validInfo(name, expYears, expGroups, considersCS1)) {
             fetch("/ratings", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
