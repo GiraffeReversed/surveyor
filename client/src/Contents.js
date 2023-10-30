@@ -64,6 +64,9 @@ function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpG
                         onChange={(e) => setName(e.target.value)}
                         isInvalid={!validName(name)}
                     />
+                    <Form.Control.Feedback type="invalid">
+                        We need your full name to later verify you are an educator.
+                    </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group md="4" as={Col}>
                     <Form.Label>Years of experience</Form.Label>
