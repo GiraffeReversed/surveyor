@@ -48,7 +48,7 @@ function Voter({ rating, order, disabled, onChange }) {
             </div>
             <Collapse in={infoOpen}>
                 <ListGroup className="small">
-                    {options.map((option, i) => <ListGroup.Item className="mb-0 p-2"><span className="me-2">{i + 1}</span>{option.long_label}</ListGroup.Item>)}
+                    {options.map((option, i) => <ListGroup.Item className="mb-0 p-2" key={i}><span className="me-2">{i + 1}</span>{option.long_label}</ListGroup.Item>)}
                 </ListGroup>
             </Collapse>
         </>
