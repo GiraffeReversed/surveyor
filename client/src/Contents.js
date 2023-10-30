@@ -161,6 +161,7 @@ export default function Contents() {
 
     let defectElems = defects.map((defect, i) => <Defect
         key={defect.id}
+        order={i}
         defect={defect}
         disabled={!validInfo(name, expYears, expGroups, considersCS1)}
         rating={ratings[defect.id]}
