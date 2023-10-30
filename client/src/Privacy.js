@@ -1,5 +1,3 @@
-import { Container } from "react-bootstrap";
-
 export default function PrivacyPolicy() {
   return (
     <>
