@@ -101,8 +101,8 @@ function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpG
 }
 
 
-function getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder) {
-    return { name: name, expYears: expYears, expGroups: expGroups, considersCS1: considersCS1, ratings: ratings, defectsOrder: defectsOrder };
+function getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID) {
+    return { name: name, expYears: expYears, expGroups: expGroups, considersCS1: considersCS1, ratings: ratings, defectsOrder: defectsOrder, userID: userID };
 }
 
 function shuffleArray(array) {
@@ -120,7 +120,7 @@ export default function Contents() {
 
     let data = JSON.parse(window.localStorage.getItem("surveyData"));
     if (data === null)
-        data = { name: "", expYears: undefined, expGroups: {}, considersCS1: false, ratings: {}, defectsOrder: undefined };
+        data = { name: "", expYears: undefined, expGroups: {}, considersCS1: false, ratings: {}, defectsOrder: undefined, userID: Math.random().toString(36).substring(2, 7) };
 
     let [defectsOrder, setDefectsOrder] = React.useState(data.defectsOrder);
     let [ratings, setRatings] = React.useState(data.ratings);
@@ -144,20 +144,21 @@ export default function Contents() {
     let [expYears, setExpYears] = React.useState(data.expYears);
     let [expGroups, setExpGroups] = React.useState(data.expGroups);
     let [considersCS1, setConsidersCS1] = React.useState(data.considersCS1);
+    let [userID, _setUserID] = React.useState(data.userID);
 
     React.useEffect(() => {
         if (validInfo(name, expYears, expGroups, considersCS1)) {
             fetch("/ratings", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder))
+                body: JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID))
             });
         }
     }, [ratings]);
 
     React.useEffect(() => {
-        window.localStorage.setItem("surveyData", JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder)));
-    }, [name, expYears, expGroups, considersCS1, ratings, defectsOrder]);
+        window.localStorage.setItem("surveyData", JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID)));
+    }, [name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID]);
 
     let defectElems = defects.map((defect, i) => <Defect
         key={defect.id}
