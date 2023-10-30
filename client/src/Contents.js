@@ -101,8 +101,18 @@ function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpG
 }
 
 
-function getDataObj(name, expYears, expGroups, considersCS1, ratings) {
-    return { name: name, expYears: expYears, expGroups: expGroups, considersCS1: considersCS1, ratings: ratings };
+function getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder) {
+    return { name: name, expYears: expYears, expGroups: expGroups, considersCS1: considersCS1, ratings: ratings, defectsOrder: defectsOrder };
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
 }
 
 export default function Contents() {
@@ -110,19 +120,22 @@ export default function Contents() {
 
     let data = JSON.parse(window.localStorage.getItem("surveyData"));
     if (data === null)
-        data = { name: "", expYears: undefined, expGroups: {}, considersCS1: false, ratings: Array.apply(undefined, { length: defects.length }) };
+        data = { name: "", expYears: undefined, expGroups: {}, considersCS1: false, ratings: {}, defectsOrder: undefined };
 
+    let [defectsOrder, setDefectsOrder] = React.useState(data.defectsOrder);
     let [ratings, setRatings] = React.useState(data.ratings);
 
     React.useEffect(() => {
         fetch("/defects").then(
             response => response.json()
         ).then(
-            // json => { setDefects(json.defects); setRatings(Array.apply(undefined, { length: json.defects.length })); }
             json => {
-                setDefects(json.defects);
-                if (ratings.length === 0)
-                    setRatings(Array.apply(undefined, { length: json.defects.length }));
+                let defects = json.defects;
+                if (defectsOrder === undefined || Object.keys(defectsOrder).length != defects.length) {
+                    defectsOrder = Object.fromEntries(shuffleArray(defects.map((defect) => defect.id)).map((id, index) => [id, index]));
+                    setDefectsOrder(defectsOrder);
+                }
+                setDefects(defects.sort((e1, e2) => defectsOrder[e1.id] - defectsOrder[e2.id]));
             }
         );
     }, []);
@@ -137,22 +150,21 @@ export default function Contents() {
             fetch("/ratings", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings))
+                body: JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder))
             });
         }
     }, [ratings]);
 
     React.useEffect(() => {
-        window.localStorage.setItem("surveyData", JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings)));
-    }, [name, expYears, expGroups, ratings, setConsidersCS1]);
+        window.localStorage.setItem("surveyData", JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder)));
+    }, [name, expYears, expGroups, considersCS1, ratings, defectsOrder]);
 
     let defectElems = defects.map((defect, i) => <Defect
-        key={i}
-        order={i}
+        key={defect.id}
         defect={defect}
         disabled={!validInfo(name, expYears, expGroups, considersCS1)}
-        rating={ratings[i]}
-        onChange={(newV) => setRatings(ratings.map((v, j) => i === j ? newV : v))}
+        rating={ratings[defect.id]}
+        onChange={(newV) => { let copy = { ...ratings }; copy[defect.id] = newV; setRatings(copy); }}
     />);
 
     return (
