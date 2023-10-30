@@ -33,7 +33,7 @@ export default function PrivacyPolicy() {
         contact us at anna.rechtackova@mail.muni.cz.</p>
 
       <p>This version of the privacy policy was published on 2023-10-30 and relates to
-        service provided on <a href="https://foo.com/">foo.com</a></p>
+        service provided on <a href={window.location.origin}>{window.location.origin}</a>.</p>
     </>
   );
 }
