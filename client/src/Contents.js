@@ -78,7 +78,7 @@ function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpG
                     </div>
                 </Form.Group>
                 <Form.Group md="6" as={Col}>
-                    <Form.Label>When filling in the survey, consider the perspective of teaching CS1 students (CS1 = introductory programming course at an university).</Form.Label>
+                    <Form.Label className='text-start'>When filling in the survey, consider the perspective of teaching CS1 students (CS1 = introductory programming course at an university).</Form.Label>
                     <Form.Check id="considersCS1">
                         <Form.Check.Input
                             type="checkbox"

@@ -60,7 +60,7 @@ export default function Defect({ order, disabled, defect, rating, onChange }) {
         <Card className="py-2">
             <Card.Title>{defect["defect name"]}</Card.Title>
             <Card.Body className="pb-0">
-                <Row className="text-start">
+                <Row className="text-start gx-3">
                     <Col sm><h5 className='small'>Description</h5><p>{defect["description"]}</p></Col>
                     <Col sm><h5 className='small'>Example</h5><pre dangerouslySetInnerHTML={{ __html: hljs.highlight(defect["code example"], { language: 'python' }).value }} /></Col>
                     <Col sm><h5 className='small'>Fix example</h5><pre dangerouslySetInnerHTML={{ __html: hljs.highlight(defect["code fix example"], { language: 'python' }).value }} /></Col>
