@@ -32,6 +32,26 @@ app.put('/ratings', jsonParser, (req, res) => {
     let body = req.body;
     let time = Date.now();
     body.time = time;
+   
+    let userID = body.userID;
+    const historyID = `history-${time.toString()}-${userID}`;
+    const userLatestID = `user-latest-${userID}`;
+
+    storage.setItem(historyID, body).then(() => console.log(`data saved: ${historyID}`));
+    storage.setItem(userLatestID, body).then(() => console.log(`data saved: ${userLatestID}`));
+
     res.send({ "message": "ok" });
-    storage.setItem(time.toString(), body).then(() => console.log("data saved"));
+})
+
+
+app.get('/ratings/:userID', (req, res) => {
+    const userID = req.params.userID;
+    const userLatestID = `user-latest-${userID}`;
+
+    storage.getItem(userLatestID).then((data) => {
+        if (data === undefined) {
+            res.status(404).send("There is no saved state for that user.")
+        }
+        res.send(data);
+    })
 })
