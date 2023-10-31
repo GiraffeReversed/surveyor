@@ -25,18 +25,21 @@ export default function Frame() {
 
   return (
     <>
-      <Navbar bg="light">
+      <Navbar bg="light" collapseOnSelect expand="md">
         <Container>
           <Navbar.Brand>Code quality defects survey</Navbar.Brand>
-          <Nav className="me-auto">
-            <Nav.Link onClick={handlePrivacyShow}>Privacy policy</Nav.Link>
-          </Nav>
-          {userID !== undefined &&
-            <Nav>
-              <Navbar.Text className="small me-2">To open this session at another device, go to <br /><a href={restore_url}>{restore_url}</a><br />Never fill in the survey on multiple devices at once.</Navbar.Text>
-              <Button onClick={handleQRShow} variant="outline-secondary" className="p-2"><QrCodeScan size={25} /></Button>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          <Navbar.Collapse id="responsive-navbar-nav">
+            <Nav className="me-auto">
+              <Nav.Link onClick={handlePrivacyShow}>Privacy policy</Nav.Link>
             </Nav>
-          }
+            {userID !== undefined &&
+              <Nav>
+                <Navbar.Text className="small me-2">To open this session at another device, go to <br /><a href={restore_url}>{restore_url}</a><br />Never fill in the survey on multiple devices at once.</Navbar.Text>
+                <Button onClick={handleQRShow} variant="outline-secondary" className="p-2"><QrCodeScan size={25} /></Button>
+              </Nav>
+            }
+          </Navbar.Collapse>
         </Container>
       </Navbar >
       <Contents userID={userID} setUserID={setUserID} />
