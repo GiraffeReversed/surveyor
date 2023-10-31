@@ -44,3 +44,7 @@ app.get('/api/ratings/:userID', (req, res) => {
         res.send(data);
     })
 })
+
+app.get('/api/export_data', (req, res) => {
+    storage.valuesWithKeyMatch('latest').then(values => res.send({ responses: values }));
+})
