@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import storage from 'node-persist';
 import { URL } from 'url';
+import { env } from 'process';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -45,6 +46,10 @@ app.get('/api/ratings/:userID', (req, res) => {
     })
 })
 
-app.get('/api/export_data', (req, res) => {
-    storage.valuesWithKeyMatch('latest').then(values => res.send({ responses: values }));
+app.get('/api/export_data/:password', (req, res) => {
+    const password = req.params.password;
+    if (password !== process.env.PASSWORD)
+        res.status(401).send();
+    else
+        storage.valuesWithKeyMatch('user-latest-').then(values => res.send({ responses: values }));
 })
