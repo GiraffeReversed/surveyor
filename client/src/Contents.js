@@ -1,4 +1,4 @@
-import { Container, Stack, Form, Row, Col } from 'react-bootstrap';
+import { Container, Stack, Form, Row, Col, Button } from 'react-bootstrap';
 import React from 'react';
 
 import Defect from './Defect.js';
@@ -118,6 +118,18 @@ function shuffleArray(array) {
     return array;
 }
 
+function submitData(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit) {
+    if (validInfo(name, expYears, expGroups, considersCS1)) {
+        fetch("/api/ratings", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID))
+        }).then(response => {
+            if (response.ok) setLastSuccessfulSubmit(new Date());
+        });
+    }
+}
+
 export default function Contents({ userID, setUserID }) {
     let [defects, setDefects] = React.useState([]);
 
@@ -150,14 +162,10 @@ export default function Contents({ userID, setUserID }) {
     let [expGroups, setExpGroups] = React.useState(data.expGroups);
     let [considersCS1, setConsidersCS1] = React.useState(data.considersCS1);
 
+    let [lastSuccessfulSubmit, setLastSuccessfulSubmit] = React.useState(undefined);
+
     React.useEffect(() => {
-        if (validInfo(name, expYears, expGroups, considersCS1)) {
-            fetch("/api/ratings", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID))
-            });
-        }
+        submitData(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit);
     }, [ratings]);
 
     React.useEffect(() => {
@@ -182,6 +190,21 @@ export default function Contents({ userID, setUserID }) {
                 considersCS1={considersCS1} setConsidersCS1={setConsidersCS1}
             />
             <Stack gap="2">{defectElems}</Stack>
+
+            <footer className="text-center text-lg-start bg-light text-muted">
+
+                <Container className="text-center mt-3 p-2 d-flex justify-content-center small">
+                    <Stack direction="horizontal" gap={3}>
+                        {lastSuccessfulSubmit !== undefined && <span>Data is submitted on every change.<br />Last submitted on {lastSuccessfulSubmit.toLocaleString()}.</span>}
+                        <Button
+                            variant="outline-secondary"
+                            size="sm"
+                            disabled={!validInfo(name, expYears, expGroups, considersCS1)}
+                            onClick={() => submitData(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit)}
+                        >Resubmit now</Button>
+                    </Stack>
+                </Container>
+            </footer>
         </Container>
     );
 }
