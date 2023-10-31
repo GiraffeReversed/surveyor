@@ -20,7 +20,7 @@ function Voter({ rating, order, disabled, onChange }) {
     return (
         <>
             <div className='d-flex mb-1'>
-                <h5 className='small mb-0'>Should notify/fix?</h5>
+                <h5 className='small mb-0'>Would you notify/ask to fix?</h5>
                 <Button
                     variant="secondary-outline"
                     className="flex-fill p-0 border border-0"
