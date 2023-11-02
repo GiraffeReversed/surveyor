@@ -39,7 +39,7 @@ function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpG
         );
     });
 
-    let expGroupsRadios = ["IT university students", "other university students", "high school students or younger in-person", "high school students or younger online"].map((label, i) => {
+    let expGroupsRadios = ["IT university students", "other university students", "high school students or younger in-person", "high school students or younger online", "none of the above"].map((label, i) => {
         return (
             <Form.Check key={i} id={`expGroups-${label}`}>
                 <Form.Check.Input
