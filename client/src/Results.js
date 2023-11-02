@@ -7,10 +7,17 @@ import 'highlight.js/styles/github.css'
 
 hljs.registerLanguage('python', python);
 
-export function ResultDefect({ defect, ratings }) {
-    // debugger;
+function getRatings(responses, defectID) {
+    return responses.map(response => response.ratings[defectID]);
+}
+
+function averageRating(ratings) {
     let definedRatings = ratings.filter(v => v !== undefined);
-    let avg = definedRatings.reduce((lt, rt) => lt + rt, 0) / definedRatings.length;
+    return definedRatings.reduce((lt, rt) => lt + rt, 0) / definedRatings.length;
+}
+
+export function ResultDefect({ defect, ratings }) {
+    let avg = averageRating(ratings);
     return (
         <Card className="py-2">
             <Card.Title>{defect["defect name"]}</Card.Title>
@@ -28,24 +35,33 @@ export function ResultDefect({ defect, ratings }) {
 }
 
 export default function Results() {
-    let data = useLoaderData();
+    let responses = useLoaderData().responses
+        .filter(response => !response.name.toLowerCase().includes("test"));
     let [defects, setDefects] = React.useState([]);
 
     React.useEffect(() => {
         fetch("/api/defects").then(
             response => response.json()
-        ).then(json => setDefects(json.defects));
+        ).then(json => {
+            let defects = json.defects;
+            defects.sort((lt, rt) => {
+                let lavg = averageRating(getRatings(responses, lt.id));
+                let ravg = averageRating(getRatings(responses, rt.id));
+
+                lavg = lavg ? lavg : 0;
+                ravg = ravg ? ravg : 0;
+
+                return -(lavg - ravg);
+            });
+            setDefects(defects);
+        });
     }, []);
 
     let defectElems = defects.map(defect =>
         <ResultDefect
             defect={defect}
             key={defect.id}
-            ratings={
-                data.responses
-                    .filter(response => !response.name.toLowerCase().includes("test"))
-                    .map(response => response.ratings[defect.id])
-            }
+            ratings={getRatings(responses, defect.id)}
         />
     );
 
