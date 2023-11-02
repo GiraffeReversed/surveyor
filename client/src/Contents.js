@@ -69,7 +69,7 @@ function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpG
                     </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group md="3" as={Col}>
-                    <Form.Label>Years of experience</Form.Label>
+                    <Form.Label>Years of experience in teaching programming</Form.Label>
                     <div>
                         {expYearsRadios}
                     </div>
