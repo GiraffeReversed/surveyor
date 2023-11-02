@@ -6,6 +6,7 @@ import { QrCodeScan } from "react-bootstrap-icons";
 import React from 'react';
 import Contents from "./Contents.js";
 import PrivacyPolicy from "./Privacy.js";
+import Results from "./Results.js";
 
 export default function Frame() {
   let [showPrivacy, setShowPrivacy] = React.useState(false);
@@ -63,6 +64,16 @@ export default function Frame() {
                 .catch(error => console.log(error));
               return redirect("/");
             }} element={<p>Data is being loaded.</p>} />
+            <Route path="/results/:password" loader={async (req) => {
+              return await fetch(`/api/export_data/${req.params.password}`)
+                .then(resp => {
+                  if (!resp.ok) {
+                    throw Error(resp.statusText);
+                  }
+                  return resp.json();
+                })
+                .catch(error => console.log(error));
+            }} element={<Results />} />
           </>
         )
       )} />
