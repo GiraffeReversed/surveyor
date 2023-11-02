@@ -478,32 +478,34 @@
         },
         {
             "defect name": "missing docstring",
+            "id": 67,
             "description": "A function, class, or method is missing a docstring.",
             "code example": "",
+            "code fix example": "add the docstring",
             "prog. concept": "multiple",
             "defect type": "poor documentation",
             "tool support": 3,
-            "lang. indep.": 1,
+            "lang.\nindep.": 1,
             "severity": 1,
             "relevance beg": 1,
             "prevalence": 3,
             "total importance": 6,
-            "note": "disputable... forcing docstring everywhere is not good idea... hard to determine algorithmically when the message is relevant\nlang. indep. 0 -> 1 (languages generally endorse function and class docstrings)\nTom: agree, I would lower severity to 1\nCHANGED as suggested",
             "selected": 1
         },
         {
             "defect name": "argument does not come first in comparison",
+            "id": 77,
             "description": "A code uses a comparison where a constant comes first and a variable only second.",
             "code example": "if 3 < some_x:",
+            "code fix example": "if some_x > 3:",
             "prog. concept": "expression",
             "defect type": "poor formatting",
             "tool support": 2,
-            "lang. indep.": 1,
+            "lang.\nindep.": 1,
             "severity": 1,
             "relevance beg": 1,
             "prevalence": 2,
             "total importance": 5,
-            "note": "Is this really a defect? I vote for removing it... particularly if 0 < x: seems quite fine to me...\nlang. indep. 0 -> 1 (not a Python convention, can happen in any language with comparison)",
             "selected": 1
         }
     ]
