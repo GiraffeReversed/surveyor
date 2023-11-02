@@ -1,4 +1,6 @@
 import { Navbar, Container, Nav, Modal, Button } from "react-bootstrap";
+import { redirect, RouterProvider } from "react-router";
+import { Route, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
 import { QRCodeSVG } from 'qrcode.react';
 import { QrCodeScan } from "react-bootstrap-icons";
 import React from 'react';
@@ -21,7 +23,7 @@ export default function Frame() {
     data = {};
 
   let [userID, setUserID] = React.useState(data.userID);
-  let restore_url = `${window.location.origin}/save.html?id=${userID}`;
+  let restore_url = `${window.location.origin}/load/${userID}`;
 
   return (
     <>
@@ -42,7 +44,28 @@ export default function Frame() {
           </Navbar.Collapse>
         </Container>
       </Navbar >
-      <Contents userID={userID} setUserID={setUserID} />
+      <RouterProvider router={createBrowserRouter(
+        createRoutesFromElements(
+          <>
+            <Route path="/" element={<Contents userID={userID} setUserID={setUserID} />} />
+            <Route path="/load/:userID" loader={async (req) => {
+              await fetch(`/api/ratings/${req.params.userID}`)
+                .then(resp => {
+                  if (!resp.ok) {
+                    throw Error(resp.statusText);
+                  }
+                  return resp.json();
+                })
+                .then(data => {
+                  window.localStorage.setItem("surveyData", JSON.stringify(data));
+                  setUserID(req.params.userID);
+                })
+                .catch(error => console.log(error));
+              return redirect("/");
+            }} element={<p>Data is being loaded.</p>} />
+          </>
+        )
+      )} />
 
       <Modal show={showPrivacy} onHide={handlePrivacyClose} size="lg">
         <Modal.Header closeButton>
