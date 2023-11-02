@@ -41,7 +41,11 @@ export default function Results() {
         <ResultDefect
             defect={defect}
             key={defect.id}
-            ratings={data.responses.map(response => response.ratings[defect.id])}
+            ratings={
+                data.responses
+                    .filter(response => !response.name.toLowerCase().includes("test"))
+                    .map(response => response.ratings[defect.id])
+            }
         />
     );
 
