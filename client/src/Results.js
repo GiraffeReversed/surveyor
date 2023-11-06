@@ -16,8 +16,14 @@ function averageRating(ratings) {
     return definedRatings.reduce((lt, rt) => lt + rt, 0) / definedRatings.length;
 }
 
+function standardDev(ratings, avg) {
+    let definedRatings = ratings.filter(v => v !== undefined);
+    return Math.sqrt(definedRatings.map(v => (v - avg) ** 2).reduce((lt, rt) => lt + rt, 0));
+}
+
 export function ResultDefect({ defect, ratings }) {
     let avg = averageRating(ratings);
+    let std = standardDev(ratings, avg);
     return (
         <Card className="py-2">
             <Card.Title>{defect["defect name"]}</Card.Title>
@@ -26,7 +32,8 @@ export function ResultDefect({ defect, ratings }) {
                     <Col sm><h5 className='small'>Description</h5><p>{defect["description"]}</p></Col>
                     <Col sm><h5 className='small'>Example</h5><pre dangerouslySetInnerHTML={{ __html: hljs.highlight(defect["code example"], { language: 'python' }).value }} /></Col>
                     <Col sm><h5 className='small'>Fix example</h5><pre dangerouslySetInnerHTML={{ __html: hljs.highlight(defect["code fix example"], { language: 'python' }).value }} /></Col>
-                    <Col sm><h5 className='small'>Average rating</h5>{avg}</Col>
+                    <Col sm><h5 className='small'>Average rating</h5>{Math.round(avg * 100) / 100}</Col>
+                    <Col sm><h5 className="small">Standard deviation</h5>{Math.round(std * 100) / 100}</Col>
                 </Row>
                 <Row><Col><h5 className='small'>Ratings</h5>{JSON.stringify(ratings)}</Col></Row>
             </Card.Body>
