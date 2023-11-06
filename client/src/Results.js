@@ -18,7 +18,7 @@ function averageRating(ratings) {
 
 function standardDev(ratings, avg) {
     let definedRatings = ratings.filter(v => v !== undefined);
-    return Math.sqrt(definedRatings.map(v => (v - avg) ** 2).reduce((lt, rt) => lt + rt, 0));
+    return Math.sqrt(definedRatings.map(v => (v - avg) ** 2).reduce((lt, rt) => lt + rt, 0) / definedRatings.length);
 }
 
 export function ResultDefect({ defect, ratings }) {
