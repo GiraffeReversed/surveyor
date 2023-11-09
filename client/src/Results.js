@@ -82,7 +82,11 @@ export default function Results() {
         />
     );
 
-    let avgByRespondent = responses.map(response => averageRating(Object.values(response.ratings)));
+    let avgByRespondent = responses.map(
+        response => averageRating(Object.values(response.ratings))
+    ).map(avg =>
+        Math.round(avg * 100) / 100
+    );
     let names = shuffleArray(responses.map(response => response.name));
 
     let expYearsCounts = {};
