@@ -21,6 +21,16 @@ function standardDev(ratings, avg) {
     return Math.sqrt(definedRatings.map(v => (v - avg) ** 2).reduce((lt, rt) => lt + rt, 0) / definedRatings.length);
 }
 
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+}
+
 export function ResultDefect({ defect, ratings }) {
     let avg = averageRating(ratings);
     let std = standardDev(ratings, avg);
@@ -72,9 +82,43 @@ export default function Results() {
         />
     );
 
+    let avgByRespondent = responses.map(response => averageRating(Object.values(response.ratings)));
+    let names = shuffleArray(responses.map(response => response.name));
+
+    let expYearsCounts = {};
+    responses.map(response => response.expYears).forEach(expYear => {
+        expYearsCounts[expYear] = (expYearsCounts[expYear] || 0) + 1;
+    });
+
+    let expGroupsCounts = {};
+    responses.map(response => response.expGroups).forEach(expGroup => {
+        Object.entries(expGroup).forEach(([key, val]) => {
+            if (val)
+                expGroupsCounts[key] = (expGroupsCounts[key] || 0) + 1;
+        })
+    });
+
+
+    let overallStats = (
+        <Card className="py-2">
+            <Card.Title>Overall</Card.Title>
+            <Card.Body className="pb-0">
+                <Row className="text-start gx-3">
+                    <Col xs="1"><h5 className='small'>Number of respondents</h5>{responses.length}</Col>
+                    <Col sm><h5 className='small'>Average rating by respondent</h5><p>{JSON.stringify(avgByRespondent)}</p></Col>
+                    <Col sm><h5 className='small'>Years of experience counts</h5>{JSON.stringify(expYearsCounts)}</Col>
+                    <Col sm><h5 className='small'>Taught student groups counts</h5>{JSON.stringify(expGroupsCounts)}</Col>
+                </Row>
+                <Row>
+                    <Col><h5 className='small'>Name cloud</h5>{`{${names.join(", ")}}`}</Col>
+                </Row>
+            </Card.Body>
+        </Card>
+    );
+
     return (
         <Container className="my-3">
-            <Stack gap="2">{defectElems}</Stack>
+            <Stack gap="2">{overallStats}{defectElems}</Stack>
         </Container>
     );
 }
