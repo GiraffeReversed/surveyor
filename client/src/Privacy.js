@@ -7,7 +7,7 @@ export default function PrivacyPolicy() {
       <p>We process and store the data you submit, namely:</p>
 
       <ul>
-        <li>your name (to be able to verify you are an educator and to group submissions from each person)</li>
+        <li>your name and university (to be able to verify you are an educator and to group submissions from each person)</li>
         <li>experience (length of teaching activity and taught student groups)</li>
         <li>whether you will consider the perspective of teaching CS1 students</li>
         <li>your rating for each displayed and rated defect</li>
@@ -32,7 +32,7 @@ export default function PrivacyPolicy() {
         of your data. To exercise these rights or to send inquires,
         contact us at anna.rechtackova@mail.muni.cz.</p>
 
-      <p>This version of the privacy policy was published on 2023-10-30 and relates to
+      <p>This version of the privacy policy was published on 2024-06-11 and relates to
         service provided on <a href={window.location.origin}>{window.location.origin}</a>.</p>
     </>
   );
