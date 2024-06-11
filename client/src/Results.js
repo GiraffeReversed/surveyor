@@ -87,7 +87,7 @@ export default function Results() {
     ).map(avg =>
         Math.round(avg * 100) / 100
     );
-    let names = shuffleArray(responses.map(response => response.name));
+    let names = shuffleArray(responses.map(response => response.name + " " + response.university));
 
     let expYearsCounts = {};
     responses.map(response => response.expYears).forEach(expYear => {

@@ -7,6 +7,10 @@ function validName(name) {
     return name !== "";
 }
 
+function validUniversity(name) {
+    return name !== "";
+}
+
 function validExpYears(expYears) {
     return expYears !== undefined;
 }
@@ -19,11 +23,11 @@ function validConsidersCS1(considersCS1) {
     return considersCS1;
 }
 
-function validInfo(name, expYears, expGroups, considersCS1) {
-    return validName(name) && validExpYears(expYears) && validExpGroups(expGroups) && validConsidersCS1(considersCS1);
+function validInfo(name, university, expYears, expGroups, considersCS1) {
+    return validName(name) && validUniversity(university) && validExpYears(expYears) && validExpGroups(expGroups) && validConsidersCS1(considersCS1);
 }
 
-function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpGroups, considersCS1, setConsidersCS1 }) {
+function SurveyeeInfo({ name, setName, university, setUniversity, expYears, setExpYears, expGroups, setExpGroups, considersCS1, setConsidersCS1 }) {
     let expYearsRadios = ["0", "1", "2-3", ">=4"].map((label, i) => {
         return (
             <Form.Check inline key={i} id={`expYears-${label}`}>
@@ -64,8 +68,17 @@ function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpG
                         onChange={(e) => setName(e.target.value)}
                         isInvalid={!validName(name)}
                     />
+
+                    <Form.Label className="mt-3">University/Affiliation</Form.Label>
+                    <Form.Control
+                        value={university}
+                        onChange={(e) => setUniversity(e.target.value)}
+                        isInvalid={!validUniversity(university)}
+                    />
+
                     <Form.Control.Feedback type="invalid">
-                        We need your full name to later verify you are an educator.
+                        We need this information to later verify you are an educator
+                        (and actual human).
                     </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group md="3" as={Col}>
@@ -94,7 +107,7 @@ function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpG
                 </Form.Group>
             </Form>
             <Row className="mb-3">
-                {validInfo(name, expYears, expGroups, considersCS1) || <div className="is-invalid" />}
+                {validInfo(name, university, expYears, expGroups, considersCS1) || <div className="is-invalid" />}
                 <div className="invalid-feedback">
                     Fill in the info before you start responding.
                 </div >
@@ -104,8 +117,8 @@ function SurveyeeInfo({ name, setName, expYears, setExpYears, expGroups, setExpG
 }
 
 
-function getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID) {
-    return { name: name, expYears: expYears, expGroups: expGroups, considersCS1: considersCS1, ratings: ratings, defectsOrder: defectsOrder, userID: userID };
+function getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID) {
+    return { name: name, university: university, expYears: expYears, expGroups: expGroups, considersCS1: considersCS1, ratings: ratings, defectsOrder: defectsOrder, userID: userID };
 }
 
 function shuffleArray(array) {
@@ -118,12 +131,12 @@ function shuffleArray(array) {
     return array;
 }
 
-function submitData(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit) {
-    if (validInfo(name, expYears, expGroups, considersCS1)) {
+function submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit) {
+    if (validInfo(name, university, expYears, expGroups, considersCS1)) {
         fetch("/api/ratings", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID))
+            body: JSON.stringify(getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID))
         }).then(response => {
             if (response.ok) setLastSuccessfulSubmit(new Date());
         });
@@ -135,7 +148,7 @@ export default function Contents({ userID, setUserID }) {
 
     let data = JSON.parse(window.localStorage.getItem("surveyData"));
     if (data === null) {
-        data = { name: "", expYears: undefined, expGroups: {}, considersCS1: false, ratings: {}, defectsOrder: undefined, userID: Math.random().toString(36).substring(2, 7) };
+        data = { name: "", university: "", expYears: undefined, expGroups: {}, considersCS1: false, ratings: {}, defectsOrder: undefined, userID: Math.random().toString(36).substring(2, 7) };
         setUserID(data.userID);
     }
 
@@ -158,6 +171,7 @@ export default function Contents({ userID, setUserID }) {
     }, []);
 
     let [name, setName] = React.useState(data.name);
+    let [university, setUniversity] = React.useState(data.university);
     let [expYears, setExpYears] = React.useState(data.expYears);
     let [expGroups, setExpGroups] = React.useState(data.expGroups);
     let [considersCS1, setConsidersCS1] = React.useState(data.considersCS1);
@@ -165,18 +179,18 @@ export default function Contents({ userID, setUserID }) {
     let [lastSuccessfulSubmit, setLastSuccessfulSubmit] = React.useState(undefined);
 
     React.useEffect(() => {
-        submitData(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit);
+        submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit);
     }, [ratings]);
 
     React.useEffect(() => {
-        window.localStorage.setItem("surveyData", JSON.stringify(getDataObj(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID)));
-    }, [name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID]);
+        window.localStorage.setItem("surveyData", JSON.stringify(getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID)));
+    }, [name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID]);
 
     let defectElems = defects.map((defect, i) => <Defect
         key={defect.id}
         order={i}
         defect={defect}
-        disabled={!validInfo(name, expYears, expGroups, considersCS1)}
+        disabled={!validInfo(name, university, expYears, expGroups, considersCS1)}
         rating={ratings[defect.id]}
         onChange={(newV) => { let copy = { ...ratings }; copy[defect.id] = newV; setRatings(copy); }}
     />);
@@ -185,6 +199,7 @@ export default function Contents({ userID, setUserID }) {
         <Container className="my-3">
             <SurveyeeInfo
                 name={name} setName={setName}
+                university={university} setUniversity={setUniversity}
                 expYears={expYears} setExpYears={setExpYears}
                 expGroups={expGroups} setExpGroups={setExpGroups}
                 considersCS1={considersCS1} setConsidersCS1={setConsidersCS1}
@@ -199,8 +214,8 @@ export default function Contents({ userID, setUserID }) {
                         <Button
                             variant="outline-secondary"
                             size="sm"
-                            disabled={!validInfo(name, expYears, expGroups, considersCS1)}
-                            onClick={() => submitData(name, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit)}
+                            disabled={!validInfo(name, university, expYears, expGroups, considersCS1)}
+                            onClick={() => submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit)}
                         >Resubmit now</Button>
                     </Stack>
                 </Container>
