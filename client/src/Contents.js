@@ -1,4 +1,4 @@
-import { Container, Stack, Form, Row, Col, Button } from 'react-bootstrap';
+import { Container, Stack, Form, Row, Col, Button, Alert } from 'react-bootstrap';
 import React from 'react';
 
 import Defect from './Defect.js';
@@ -143,6 +143,18 @@ function submitData(name, university, expYears, expGroups, considersCS1, ratings
     }
 }
 
+export function WelcomeWagon() {
+    return <Row><Alert variant="secondary">
+        <Alert.Heading>Welcome to the code quality defect
+            survey and thank you so much for participating.</Alert.Heading>
+        <p className='mb-0 text-start'>
+            There are 30 code quality defects in the survey. For each one,
+            fill in whether <b>you personally</b> would notify a CS1 student of the
+            defect and whether you would require the student to fix the defect.
+            Fill in information on your teaching experience below to enable the survey.</p>
+    </Alert></Row >;
+}
+
 export default function Contents({ userID, setUserID }) {
     let [defects, setDefects] = React.useState([]);
 
@@ -197,6 +209,7 @@ export default function Contents({ userID, setUserID }) {
 
     return (
         <Container className="my-3">
+            <WelcomeWagon />
             <SurveyeeInfo
                 name={name} setName={setName}
                 university={university} setUniversity={setUniversity}
