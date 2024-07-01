@@ -61,26 +61,33 @@ function SurveyeeInfo({ name, setName, university, setUniversity, expYears, setE
     return (
         <>
             <Form as={Row} className="text-start">
-                <Form.Group md="3" as={Col}>
-                    <Form.Label>Full name</Form.Label>
-                    <Form.Control
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        isInvalid={!validName(name)}
-                    />
+                <Col>
+                    <Form.Group md="3" as={Row}>
+                        <Form.Label>Full name</Form.Label>
+                        <Form.Control
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            isInvalid={!validName(name)}
+                        />
 
-                    <Form.Label className="mt-3">University/Affiliation</Form.Label>
-                    <Form.Control
-                        value={university}
-                        onChange={(e) => setUniversity(e.target.value)}
-                        isInvalid={!validUniversity(university)}
-                    />
-
-                    <Form.Control.Feedback type="invalid">
-                        We need this information to later verify you are an educator
-                        (and actual human).
-                    </Form.Control.Feedback>
-                </Form.Group>
+                        <Form.Control.Feedback type="invalid">
+                            We need this information to later verify you are an educator
+                            (and actual human).
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group md="3" as={Row}>
+                        <Form.Label className="mt-3">University/Affiliation</Form.Label>
+                        <Form.Control
+                            value={university}
+                            onChange={(e) => setUniversity(e.target.value)}
+                            isInvalid={!validUniversity(university)}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            We need this information to later verify you are an educator
+                            (and actual human).
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                </Col>
                 <Form.Group md="3" as={Col}>
                     <Form.Label>Years of experience in teaching programming</Form.Label>
                     <div>
