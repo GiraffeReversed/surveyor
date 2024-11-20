@@ -28,7 +28,7 @@ export default function Frame() {
 
   return (
     <>
-      <Navbar bg="light" collapseOnSelect expand="md">
+      <Navbar bg="light" collapseOnSelect expand="md" className="border">
         <Container>
           <Navbar.Brand>Code quality defects survey</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />

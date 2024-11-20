@@ -1,4 +1,4 @@
-import { Container, Stack, Form, Row, Col, Button, Alert } from 'react-bootstrap';
+import { Container, Stack, Form, Row, Col, Button, Alert, Navbar, Nav, Accordion } from 'react-bootstrap';
 import React from 'react';
 
 import Defect from './Defect.js';
@@ -124,8 +124,18 @@ function SurveyeeInfo({ name, setName, university, setUniversity, expYears, setE
 }
 
 
-function getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID) {
-    return { name: name, university: university, expYears: expYears, expGroups: expGroups, considersCS1: considersCS1, ratings: ratings, defectsOrder: defectsOrder, userID: userID };
+function getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, text) {
+    return {
+        name: name,
+        university: university,
+        expYears: expYears,
+        expGroups: expGroups,
+        considersCS1: considersCS1,
+        ratings: ratings,
+        defectsOrder: defectsOrder,
+        userID: userID,
+        text: text
+    };
 }
 
 function shuffleArray(array) {
@@ -138,12 +148,12 @@ function shuffleArray(array) {
     return array;
 }
 
-function submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit) {
+function submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, text, setLastSuccessfulSubmit) {
     if (validInfo(name, university, expYears, expGroups, considersCS1)) {
         fetch("/api/ratings", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID))
+            body: JSON.stringify(getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, text))
         }).then(response => {
             if (response.ok) setLastSuccessfulSubmit(new Date());
         });
@@ -162,12 +172,41 @@ export function WelcomeWagon() {
     </Alert></Row >;
 }
 
+export function FreeFormComment({ text, setText, onBlur }) {
+    return <Accordion style={{ width: "100%" }}>
+        <Accordion.Item eventKey="0">
+            <Accordion.Header>Free form comment (optional)</Accordion.Header>
+            <Accordion.Body>
+                <Form.Group className="mb-3">
+                    <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={text}
+                        onChange={(e) => { setText(e.target.value) }}
+                        onBlur={onBlur}
+                    />
+                </Form.Group>
+            </Accordion.Body>
+        </Accordion.Item>
+    </Accordion>;
+}
+
 export default function Contents({ userID, setUserID }) {
     let [defects, setDefects] = React.useState([]);
 
     let data = JSON.parse(window.localStorage.getItem("surveyData"));
     if (data === null) {
-        data = { name: "", university: "", expYears: undefined, expGroups: {}, considersCS1: false, ratings: {}, defectsOrder: undefined, userID: Math.random().toString(36).substring(2, 7) };
+        data = {
+            name: "",
+            university: "",
+            expYears: undefined,
+            expGroups: {},
+            considersCS1: false,
+            ratings: {},
+            defectsOrder: undefined,
+            userID: Math.random().toString(36).substring(2, 7),
+            text: "",
+        };
         setUserID(data.userID);
     }
 
@@ -194,16 +233,27 @@ export default function Contents({ userID, setUserID }) {
     let [expYears, setExpYears] = React.useState(data.expYears);
     let [expGroups, setExpGroups] = React.useState(data.expGroups);
     let [considersCS1, setConsidersCS1] = React.useState(data.considersCS1);
+    let [freeFormText, setFreeFormText] = React.useState(data.text);
 
     let [lastSuccessfulSubmit, setLastSuccessfulSubmit] = React.useState(undefined);
 
     React.useEffect(() => {
-        submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit);
+        submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, setLastSuccessfulSubmit);
     }, [ratings]);
 
     React.useEffect(() => {
-        window.localStorage.setItem("surveyData", JSON.stringify(getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID)));
-    }, [name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID]);
+        document.onvisibilitychange = function () {
+            if (document.visibilityState === 'hidden') {
+                submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, setLastSuccessfulSubmit);
+            }
+        };
+
+        window.addEventListener("beforeunload", () => submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, setLastSuccessfulSubmit));
+    });
+
+    React.useEffect(() => {
+        window.localStorage.setItem("surveyData", JSON.stringify(getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText)));
+    }, [name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText]);
 
     let defectElems = defects.map((defect, i) => <Defect
         key={defect.id}
@@ -215,31 +265,45 @@ export default function Contents({ userID, setUserID }) {
     />);
 
     return (
-        <Container className="my-3">
-            <WelcomeWagon />
-            <SurveyeeInfo
-                name={name} setName={setName}
-                university={university} setUniversity={setUniversity}
-                expYears={expYears} setExpYears={setExpYears}
-                expGroups={expGroups} setExpGroups={setExpGroups}
-                considersCS1={considersCS1} setConsidersCS1={setConsidersCS1}
-            />
-            <Stack gap="2">{defectElems}</Stack>
+        <>
+            <Container className="my-3">
+                <WelcomeWagon />
+                <SurveyeeInfo
+                    name={name} setName={setName}
+                    university={university} setUniversity={setUniversity}
+                    expYears={expYears} setExpYears={setExpYears}
+                    expGroups={expGroups} setExpGroups={setExpGroups}
+                    considersCS1={considersCS1} setConsidersCS1={setConsidersCS1}
+                />
+                <Stack gap="2">{defectElems}</Stack>
 
-            <footer className="text-center text-lg-start bg-light text-muted">
+                <footer className="text-center text-lg-start bg-light text-muted">
 
-                <Container className="text-center mt-3 p-2 d-flex justify-content-center small">
-                    <Stack direction="horizontal" gap={3}>
-                        {lastSuccessfulSubmit !== undefined && <span>Data is submitted on every change.<br />Last submitted on {lastSuccessfulSubmit.toLocaleString()}.</span>}
-                        <Button
-                            variant="outline-secondary"
-                            size="sm"
-                            disabled={!validInfo(name, university, expYears, expGroups, considersCS1)}
-                            onClick={() => submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit)}
-                        >Resubmit now</Button>
-                    </Stack>
+                    <Container className="text-center mt-3 p-2 d-flex justify-content-center small">
+                        <Stack direction="horizontal" gap={3}>
+                            {lastSuccessfulSubmit !== undefined && <span>Data is submitted on every change.<br />Last submitted on {lastSuccessfulSubmit.toLocaleString()}.</span>}
+                            <Button
+                                variant="outline-secondary"
+                                size="sm"
+                                disabled={!validInfo(name, university, expYears, expGroups, considersCS1)}
+                                onClick={() => submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit)}
+                            >Resubmit now</Button>
+                        </Stack>
+                    </Container>
+                </footer>
+            </Container>
+            <Navbar bg="light" expand="md" fixed="bottom" className="border">
+                <Container>
+                    <Nav className="me-auto"></Nav>
+                    <Nav className="col">
+                        <FreeFormComment
+                            text={freeFormText}
+                            setText={setFreeFormText}
+                            onBlur={() => submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, setLastSuccessfulSubmit)}
+                        />
+                    </Nav>
                 </Container>
-            </footer>
-        </Container>
+            </Navbar>
+        </>
     );
 }

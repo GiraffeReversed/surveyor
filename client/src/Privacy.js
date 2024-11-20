@@ -12,6 +12,7 @@ export default function PrivacyPolicy() {
         <li>whether you will consider the perspective of teaching CS1 students</li>
         <li>your rating for each displayed and rated defect</li>
         <li>the order in which the defects were displayed to you</li>
+        <li>any comment you added</li>
         <li>the time when you made the action</li>
       </ul>
 
@@ -25,14 +26,14 @@ export default function PrivacyPolicy() {
       <p>We do not use cookies and only save data to localStorage if necessary for the website’s
         functionality.</p>
 
-      <p>By filling in the information, you acknowledge that you grant consent to the
-        processing and storage of your data as outlined above.</p>
+      <p>No data is sent until you grant consent to the processing and storage of your data as outlined
+        above.</p>
 
       <p>You have the right to withdraw the consent, request retrieval, correction, or removal
         of your data. To exercise these rights or to send inquires,
         contact us at anna.rechtackova@mail.muni.cz.</p>
 
-      <p>This version of the privacy policy was published on 2024-06-11 and relates to
+      <p>This version of the privacy policy was published on 2024-11-20 and relates to
         service provided on <a href={window.location.origin}>{window.location.origin}</a>.</p>
     </>
   );
