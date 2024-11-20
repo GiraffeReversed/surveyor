@@ -286,7 +286,7 @@ export default function Contents({ userID, setUserID }) {
         key={defect.id}
         order={i}
         defect={defect}
-        disabled={!validInfo(name, university, expYears, expGroups, considersCS1)}
+        disabled={!validInfo(name, university, expYears, expGroups, considersCS1, consents)}
         rating={ratings[defect.id]}
         onChange={(newV) => { let copy = { ...ratings }; copy[defect.id] = newV; setRatings(copy); }}
     />);
@@ -313,7 +313,7 @@ export default function Contents({ userID, setUserID }) {
                             <Button
                                 variant="outline-secondary"
                                 size="sm"
-                                disabled={!validInfo(name, university, expYears, expGroups, considersCS1)}
+                                disabled={!validInfo(name, university, expYears, expGroups, considersCS1, consents)}
                                 onClick={() => submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, consents, setLastSuccessfulSubmit)}
                             >Resubmit now</Button>
                         </Stack>
