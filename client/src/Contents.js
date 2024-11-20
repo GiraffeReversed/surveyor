@@ -23,11 +23,15 @@ function validConsidersCS1(considersCS1) {
     return considersCS1;
 }
 
-function validInfo(name, university, expYears, expGroups, considersCS1) {
-    return validName(name) && validUniversity(university) && validExpYears(expYears) && validExpGroups(expGroups) && validConsidersCS1(considersCS1);
+function validConsent(consents) {
+    return consents
 }
 
-function SurveyeeInfo({ name, setName, university, setUniversity, expYears, setExpYears, expGroups, setExpGroups, considersCS1, setConsidersCS1 }) {
+function validInfo(name, university, expYears, expGroups, considersCS1, consents) {
+    return validName(name) && validUniversity(university) && validExpYears(expYears) && validExpGroups(expGroups) && validConsidersCS1(considersCS1) && validConsent(consents);
+}
+
+function SurveyeeInfo({ name, setName, university, setUniversity, expYears, setExpYears, expGroups, setExpGroups, considersCS1, setConsidersCS1, consents, setConsents }) {
     let expYearsRadios = ["0", "1", "2-3", ">=4"].map((label, i) => {
         return (
             <Form.Check inline key={i} id={`expYears-${label}`}>
@@ -59,48 +63,52 @@ function SurveyeeInfo({ name, setName, university, setUniversity, expYears, setE
     });
 
     return (
-        <>
-            <Form as={Row} className="text-start">
-                <Col>
-                    <Form.Group md="3" as={Row}>
-                        <Form.Label>Full name</Form.Label>
-                        <Form.Control
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            isInvalid={!validName(name)}
-                        />
+        <Form className="border rounded px-3 pb-3 m-0 mb-3">
+            <Row as={Row} className="text-start">
+                <Col md="12" lg="4" xl="3" className="pt-3">
+                    <Form.Group as={Row}>
+                        <Col>
+                            <Form.Label>Full name</Form.Label>
+                            <Form.Control
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                isInvalid={!validName(name)}
+                            />
 
-                        <Form.Control.Feedback type="invalid">
-                            We need this information to later verify you are an educator
-                            (and actual human).
-                        </Form.Control.Feedback>
+                            <Form.Control.Feedback type="invalid">
+                                We need this information to later verify you are an educator
+                                (and a real human).
+                            </Form.Control.Feedback>
+                        </Col>
                     </Form.Group>
-                    <Form.Group md="3" as={Row}>
-                        <Form.Label className="mt-3">University/Affiliation</Form.Label>
-                        <Form.Control
-                            value={university}
-                            onChange={(e) => setUniversity(e.target.value)}
-                            isInvalid={!validUniversity(university)}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            We need this information to later verify you are an educator
-                            (and actual human).
-                        </Form.Control.Feedback>
+                    <Form.Group as={Row}>
+                        <Col>
+                            <Form.Label className="mt-3">University/Affiliation</Form.Label>
+                            <Form.Control
+                                value={university}
+                                onChange={(e) => setUniversity(e.target.value)}
+                                isInvalid={!validUniversity(university)}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                We need this information to later verify you are an educator
+                                (and a real human).
+                            </Form.Control.Feedback>
+                        </Col>
                     </Form.Group>
                 </Col>
-                <Form.Group md="3" as={Col}>
+                <Form.Group md="12" lg="4" xl="3" as={Col} className="pt-3">
                     <Form.Label>Years of experience in teaching programming</Form.Label>
                     <div>
                         {expYearsRadios}
                     </div>
                 </Form.Group>
-                <Form.Group md="3" as={Col}>
+                <Form.Group md="12" lg="4" xl="3" as={Col} className="pt-3">
                     <Form.Label>Taught student groups</Form.Label>
                     <div>
                         {expGroupsRadios}
                     </div>
                 </Form.Group>
-                <Form.Group md="3" as={Col}>
+                <Form.Group md="12" lg="4" xl="3" as={Col} className="pt-3">
                     <Form.Label>When filling in the survey, consider the perspective of teaching CS1 students (CS1 = introductory programming course at an university).</Form.Label>
                     <Form.Check id="considersCS1">
                         <Form.Check.Input
@@ -112,19 +120,35 @@ function SurveyeeInfo({ name, setName, university, setUniversity, expYears, setE
                         <Form.Check.Label>I will consider this perspective.</Form.Check.Label>
                     </Form.Check>
                 </Form.Group>
-            </Form>
-            <Row className="mb-3">
-                {validInfo(name, university, expYears, expGroups, considersCS1) || <div className="is-invalid" />}
-                <div className="invalid-feedback">
-                    Fill in the info before you start responding.
-                </div >
+                <Form.Group xs className="mt-3" as={Col}>
+                    <Form.Label>Consent</Form.Label>
+                    <Form.Check id="consents">
+                        <Form.Check.Input
+                            type="checkbox"
+                            isInvalid={!validConsent(consents)}
+                            checked={consents === true}
+                            onChange={() => { setConsents(!consents) }}
+                        />
+                        <Form.Check.Label>
+                            I grant consent to use my data as described in the Privacy policy.
+                        </Form.Check.Label>
+                    </Form.Check>
+                </Form.Group>
             </Row>
-        </>
+            <Row className="">
+                <Col>
+                    {validInfo(name, university, expYears, expGroups, considersCS1, consents) || <><div className="is-invalid" /><hr /></>}
+                    <div className="invalid-feedback mt-0">
+                        Fill in the info before you start responding.
+                    </div >
+                </Col>
+            </Row>
+        </Form >
     );
 }
 
 
-function getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, text) {
+function getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, text, consents) {
     return {
         name: name,
         university: university,
@@ -134,7 +158,8 @@ function getDataObj(name, university, expYears, expGroups, considersCS1, ratings
         ratings: ratings,
         defectsOrder: defectsOrder,
         userID: userID,
-        text: text
+        text: text,
+        consents: consents
     };
 }
 
@@ -148,12 +173,12 @@ function shuffleArray(array) {
     return array;
 }
 
-function submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, text, setLastSuccessfulSubmit) {
-    if (validInfo(name, university, expYears, expGroups, considersCS1)) {
+function submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, text, consents, setLastSuccessfulSubmit) {
+    if (validInfo(name, university, expYears, expGroups, considersCS1, consents)) {
         fetch("/api/ratings", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, text))
+            body: JSON.stringify(getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, text, consents))
         }).then(response => {
             if (response.ok) setLastSuccessfulSubmit(new Date());
         });
@@ -161,7 +186,7 @@ function submitData(name, university, expYears, expGroups, considersCS1, ratings
 }
 
 export function WelcomeWagon() {
-    return <Row><Alert variant="secondary">
+    return <Alert variant="secondary">
         <Alert.Heading>Welcome to the code quality defect
             survey and thank you so much for participating.</Alert.Heading>
         <p className='mb-0 text-start'>
@@ -169,7 +194,7 @@ export function WelcomeWagon() {
             fill in whether <b>you personally</b> would notify a CS1 student of the
             defect and whether you would require the student to fix the defect.
             Fill in information on your teaching experience below to enable the survey.</p>
-    </Alert></Row >;
+    </Alert>;
 }
 
 export function FreeFormComment({ text, setText, onBlur }) {
@@ -204,6 +229,7 @@ export default function Contents({ userID, setUserID }) {
             considersCS1: false,
             ratings: {},
             defectsOrder: undefined,
+            consents: false,
             userID: Math.random().toString(36).substring(2, 7),
             text: "",
         };
@@ -233,27 +259,28 @@ export default function Contents({ userID, setUserID }) {
     let [expYears, setExpYears] = React.useState(data.expYears);
     let [expGroups, setExpGroups] = React.useState(data.expGroups);
     let [considersCS1, setConsidersCS1] = React.useState(data.considersCS1);
+    let [consents, setConsents] = React.useState(data.consents);
     let [freeFormText, setFreeFormText] = React.useState(data.text);
 
     let [lastSuccessfulSubmit, setLastSuccessfulSubmit] = React.useState(undefined);
 
     React.useEffect(() => {
-        submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, setLastSuccessfulSubmit);
+        submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, consents, setLastSuccessfulSubmit);
     }, [ratings]);
 
     React.useEffect(() => {
         document.onvisibilitychange = function () {
             if (document.visibilityState === 'hidden') {
-                submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, setLastSuccessfulSubmit);
+                submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, consents, setLastSuccessfulSubmit);
             }
         };
 
-        window.addEventListener("beforeunload", () => submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, setLastSuccessfulSubmit));
+        window.addEventListener("beforeunload", () => submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, consents, setLastSuccessfulSubmit));
     });
 
     React.useEffect(() => {
-        window.localStorage.setItem("surveyData", JSON.stringify(getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText)));
-    }, [name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText]);
+        window.localStorage.setItem("surveyData", JSON.stringify(getDataObj(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, consents)));
+    }, [name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, consents]);
 
     let defectElems = defects.map((defect, i) => <Defect
         key={defect.id}
@@ -266,7 +293,7 @@ export default function Contents({ userID, setUserID }) {
 
     return (
         <>
-            <Container className="my-3">
+            <Container className="my-3 p-0">
                 <WelcomeWagon />
                 <SurveyeeInfo
                     name={name} setName={setName}
@@ -274,6 +301,7 @@ export default function Contents({ userID, setUserID }) {
                     expYears={expYears} setExpYears={setExpYears}
                     expGroups={expGroups} setExpGroups={setExpGroups}
                     considersCS1={considersCS1} setConsidersCS1={setConsidersCS1}
+                    consents={consents} setConsents={setConsents}
                 />
                 <Stack gap="2">{defectElems}</Stack>
 
@@ -286,7 +314,7 @@ export default function Contents({ userID, setUserID }) {
                                 variant="outline-secondary"
                                 size="sm"
                                 disabled={!validInfo(name, university, expYears, expGroups, considersCS1)}
-                                onClick={() => submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, setLastSuccessfulSubmit)}
+                                onClick={() => submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, consents, setLastSuccessfulSubmit)}
                             >Resubmit now</Button>
                         </Stack>
                     </Container>
@@ -299,7 +327,7 @@ export default function Contents({ userID, setUserID }) {
                         <FreeFormComment
                             text={freeFormText}
                             setText={setFreeFormText}
-                            onBlur={() => submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, setLastSuccessfulSubmit)}
+                            onBlur={() => submitData(name, university, expYears, expGroups, considersCS1, ratings, defectsOrder, userID, freeFormText, consents, setLastSuccessfulSubmit)}
                         />
                     </Nav>
                 </Container>
