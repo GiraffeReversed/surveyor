@@ -191,7 +191,7 @@
             "defect name": "using global variables",
             "id": "14",
             "description": "The code unnecessarily uses global variables.",
-            "code example": "",
+            "code example": "# no example here as we did not find a concise one",
             "code fix example": "",
             "prog. concept": "variable",
             "defect type": "poor design",
