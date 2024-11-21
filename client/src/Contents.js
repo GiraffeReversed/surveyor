@@ -305,9 +305,13 @@ export default function Contents({ userID, setUserID }) {
                 />
                 <Stack gap="2">{defectElems}</Stack>
 
-                <footer className="text-center text-lg-start bg-light text-muted">
-
-                    <Container className="text-center mt-3 p-2 d-flex justify-content-center small">
+                <footer className="text-center text-lg-start text-muted">
+                    <Container className="text-center mt-3 p-2 d-flex justify-content-center small bg-light">
+                        <p class="mb-0">
+                            Original paper Catalog of Code Quality Defects in Introductory Programming can be found <a class="link-secondary" href="https://dl.acm.org/doi/10.1145/3649217.3653638" target="_blank">here</a>.
+                        </p>
+                    </Container>
+                    <Container className="text-center mt-3 p-2 d-flex justify-content-center small bg-light">
                         <Stack direction="horizontal" gap={3}>
                             {lastSuccessfulSubmit !== undefined && <span>Data is submitted on every change.<br />Last submitted on {lastSuccessfulSubmit.toLocaleString()}.</span>}
                             <Button
