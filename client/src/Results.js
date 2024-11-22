@@ -53,7 +53,7 @@ export function ResultDefect({ defect, ratings }) {
 
 export default function Results() {
     let responses = useLoaderData().responses
-        .filter(response => !response.name.toLowerCase().includes("test"));
+        .filter(response => !response.name.toLowerCase().includes("test") && response.university !== undefined);
     let [defects, setDefects] = React.useState([]);
 
     React.useEffect(() => {
@@ -102,6 +102,15 @@ export default function Results() {
         })
     });
 
+    let texts = (
+        <Card className="py-2">
+            <Card.Title>Text comments</Card.Title>
+            <Card.Body>
+                {responses.map(response => response.text).filter(text => text).map(text => <Row><Col className="small">{text}</Col></Row>)}
+            </Card.Body>
+        </Card>
+    );
+
 
     let overallStats = (
         <Card className="py-2">
@@ -109,6 +118,7 @@ export default function Results() {
             <Card.Body className="pb-0">
                 <Row className="text-start gx-3">
                     <Col xs="1"><h5 className='small'>Number of respondents</h5>{responses.length}</Col>
+                    <Col sm><h5 className='small'>Responses per respondent</h5>{JSON.stringify(responses.map(resp => Object.values(resp.ratings).filter(r => r).length))}</Col>
                     <Col sm><h5 className='small'>Average rating by respondent</h5><p>{JSON.stringify(avgByRespondent)}</p></Col>
                     <Col sm><h5 className='small'>Years of experience counts</h5>{JSON.stringify(expYearsCounts)}</Col>
                     <Col sm><h5 className='small'>Taught student groups counts</h5>{JSON.stringify(expGroupsCounts)}</Col>
@@ -122,7 +132,7 @@ export default function Results() {
 
     return (
         <Container className="my-3">
-            <Stack gap="2">{overallStats}{defectElems}</Stack>
+            <Stack gap="2">{overallStats}{texts}{defectElems}</Stack>
         </Container>
     );
 }
